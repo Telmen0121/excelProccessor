@@ -95,15 +95,18 @@ export default function ReportsClient() {
     fetchData();
   }, []);
 
-  async function handleDateFilter() {
-    if (!startDate || !endDate) return;
+  async function handleDateFilter(start?: string, end?: string) {
+    const effectiveStart = start || startDate;
+    const effectiveEnd = end || endDate;
+    
+    if (!effectiveStart || !effectiveEnd) return;
 
     setFilterLoading(true);
     try {
       const res = await fetch("/api/report/by-date", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ start: startDate, end: endDate }),
+        body: JSON.stringify({ start: effectiveStart, end: effectiveEnd }),
       });
       const data = await res.json();
       setFilteredSummary(data.summary);

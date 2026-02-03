@@ -34,13 +34,14 @@ export default function ProductsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [stockFilter, setStockFilter] = useState<"all" | "inStock" | "lowStock" | "outOfStock">("all");
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  async function fetchProducts(page = 1, searchTerm = "", categoryFilter = "") {
+  async function fetchProducts(page = 1, searchTerm = "", categoryFilter = "", fetchAll = false) {
     setLoading(true);
     try {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: "50",
+        limit: fetchAll ? "10000" : "50",
         ...(searchTerm && { search: searchTerm }),
         ...(categoryFilter && { category: categoryFilter })
       });
@@ -49,7 +50,7 @@ export default function ProductsPage() {
       const data = await res.json();
       
       setProducts(data.products || []);
-      setPagination(data.pagination);
+      setPagination(fetchAll ? null : data.pagination);
     } catch (error) {
       console.error("Failed to fetch products:", error);
     } finally {
@@ -61,9 +62,40 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
+  // Refetch all products when a category is selected (to bypass pagination)
+  useEffect(() => {
+    if (selectedCategory !== "all") {
+      fetchProducts(1, search, category, true);
+    } else {
+      fetchProducts(1, search, category, false);
+    }
+  }, [selectedCategory]);
+
+  // Extract unique categories from products
+  const uniqueCategories = useMemo(() => {
+    const categorySet = new Set<string>();
+    products.forEach(product => {
+      if (product.categories) {
+        // Split by comma in case a product has multiple categories
+        product.categories.split(',').forEach(cat => {
+          const trimmed = cat.trim();
+          if (trimmed) categorySet.add(trimmed);
+        });
+      }
+    });
+    return Array.from(categorySet).sort();
+  }, [products]);
+
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...products];
+
+    // Apply category filter
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(p => 
+        p.categories && p.categories.toLowerCase().includes(selectedCategory.toLowerCase())
+      );
+    }
 
     // Apply stock filter
     if (stockFilter === "inStock") {
@@ -74,32 +106,36 @@ export default function ProductsPage() {
       filtered = filtered.filter(p => p.stock === 0);
     }
 
-    // Apply sorting
-    filtered.sort((a, b) => {
-      let comparison = 0;
-      
-      switch (sortField) {
-        case "name":
-          comparison = (a.name || "").localeCompare(b.name || "");
-          break;
-        case "price":
-          const priceA = a.salePrice ?? a.price ?? 0;
-          const priceB = b.salePrice ?? b.price ?? 0;
-          comparison = priceA - priceB;
-          break;
-        case "stock":
-          comparison = (a.stock ?? 0) - (b.stock ?? 0);
-          break;
-        case "createdAt":
-          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-          break;
-      }
-      
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
+    // Apply sorting - force alphabetical when category is selected
+    if (selectedCategory !== "all") {
+      filtered.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    } else {
+      filtered.sort((a, b) => {
+        let comparison = 0;
+        
+        switch (sortField) {
+          case "name":
+            comparison = (a.name || "").localeCompare(b.name || "");
+            break;
+          case "price":
+            const priceA = a.salePrice ?? a.price ?? 0;
+            const priceB = b.salePrice ?? b.price ?? 0;
+            comparison = priceA - priceB;
+            break;
+          case "stock":
+            comparison = (a.stock ?? 0) - (b.stock ?? 0);
+            break;
+          case "createdAt":
+            comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+            break;
+        }
+        
+        return sortOrder === "asc" ? comparison : -comparison;
+      });
+    }
 
     return filtered;
-  }, [products, sortField, sortOrder, stockFilter]);
+  }, [products, sortField, sortOrder, stockFilter, selectedCategory]);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -177,6 +213,57 @@ export default function ProductsPage() {
           </button>
         </form>
       </div>
+
+      {/* Category Filter Buttons */}
+      {uniqueCategories.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mr-2">Ангилал:</span>
+            <button
+              onClick={() => setSelectedCategory("all")}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                selectedCategory === "all"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+              }`}
+            >
+              Бүгд
+              <span className={`ml-1.5 px-1.5 py-0.5 rounded text-xs ${
+                selectedCategory === "all"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
+              }`}>
+                {products.length}
+              </span>
+            </button>
+            {uniqueCategories.map((cat) => {
+              const count = products.filter(p => 
+                p.categories && p.categories.toLowerCase().includes(cat.toLowerCase())
+              ).length;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    selectedCategory === cat
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {cat}
+                  <span className={`ml-1.5 px-1.5 py-0.5 rounded text-xs ${
+                    selectedCategory === cat
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Filters & Controls Bar */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
@@ -435,8 +522,8 @@ export default function ProductsPage() {
         </div>
       )}
 
-      {/* Pagination */}
-      {pagination && pagination.totalPages > 1 && (
+      {/* Pagination - hidden when category is selected */}
+      {selectedCategory === "all" && pagination && pagination.totalPages > 1 && (
         <div className="flex justify-center gap-2">
           <button
             onClick={() => fetchProducts(pagination.page - 1, search, category)}

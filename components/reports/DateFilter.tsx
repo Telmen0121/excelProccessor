@@ -7,7 +7,7 @@ interface DateFilterProps {
   endDate: string;
   onStartDateChange: (date: string) => void;
   onEndDateChange: (date: string) => void;
-  onApply: () => void;
+  onApply: (start?: string, end?: string) => void;
   loading?: boolean;
 }
 
@@ -35,22 +35,27 @@ export default function DateFilter({
     if (days > 0) {
       start.setDate(start.getDate() - days);
     }
-    onStartDateChange(start.toISOString().split("T")[0]);
-    onEndDateChange(end.toISOString().split("T")[0]);
+    const startStr = start.toISOString().split("T")[0];
+    const endStr = end.toISOString().split("T")[0];
+    onStartDateChange(startStr);
+    onEndDateChange(endStr);
     setActiveFilter(id);
-    // Instantly apply
-    setTimeout(() => onApply(), 50);
+    // Instantly apply with the new dates
+    onApply(startStr, endStr);
   };
 
   const handleDateChange = (type: "start" | "end", value: string) => {
     if (type === "start") {
       onStartDateChange(value);
+      setActiveFilter("custom");
+      // Apply with new start date and current end date
+      if (endDate) onApply(value, endDate);
     } else {
       onEndDateChange(value);
+      setActiveFilter("custom");
+      // Apply with current start date and new end date
+      if (startDate) onApply(startDate, value);
     }
-    setActiveFilter("custom");
-    // Instantly apply when both dates are set
-    setTimeout(() => onApply(), 50);
   };
 
   return (
