@@ -57,3 +57,17 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
 }
+
+model ImportHistory {
+  id              Int      @id @default(autoincrement())
+  fileName        String
+  fileType        String   // 'orders' or 'products'
+  totalRows       Int
+  importedCount   Int
+  skippedCount    Int
+  duplicatesInFile Int     @default(0)
+  duplicatesInDb  Int      @default(0)
+  status          String   // 'success', 'partial', 'failed'
+  errorMessages   String?  @db.Text
+  createdAt       DateTime @default(now())
+}

@@ -3,17 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import {
+  HomeIcon,
+  UploadIcon,
+  ClipboardListIcon,
+  CubeIcon,
+  ChartLineIcon,
+  ArchiveIcon,
+} from "./Icons";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
   const navItems = [
-    { href: "/", label: "Нүүр  ", icon: "📊" },
-    { href: "/upload", label: "Файл оруулах", icon: "📤" },
-    { href: "/orders", label: "Захиалгууд", icon: "📋" },
-    { href: "/products", label: "Бүтээгдэхүүн", icon: "📦" },
-    { href: "/reports", label: "Тайлан", icon: "📈" },
+    { href: "/", label: "Нүүр", icon: HomeIcon },
+    { href: "/upload", label: "Файл оруулах", icon: UploadIcon },
+    { href: "/orders", label: "Захиалгууд", icon: ClipboardListIcon },
+    { href: "/products", label: "Бүтээгдэхүүн", icon: CubeIcon },
+    { href: "/reports", label: "Тайлан", icon: ChartLineIcon },
+    { href: "/import-history", label: "Оруулсан файлын түүх", icon: ArchiveIcon },
   ];
 
   return (
@@ -74,7 +83,7 @@ export default function Sidebar() {
               }`}
               title={collapsed ? item.label : undefined}
             >
-              <span className="text-xl flex-shrink-0">{item.icon}</span>
+              <item.icon className="w-5 h-5 flex-shrink-0" />
               {!collapsed && <span>{item.label}</span>}
             </Link>
           );

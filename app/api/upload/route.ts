@@ -14,14 +14,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    // Validate file type
+    // Validate file type - accept various Excel and spreadsheet formats
     const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
-      return NextResponse.json({ error: "File must be an Excel file (.xlsx or .xls)" }, { status: 400 });
+    const validExtensions = ['.xlsx', '.xls', '.xlsm', '.xlsb', '.csv', '.ods'];
+    const isValid = validExtensions.some(ext => fileName.endsWith(ext));
+    
+    if (!isValid) {
+      return NextResponse.json({ error: "File must be a spreadsheet file (.xlsx, .xls, .xlsm, .xlsb, .csv, .ods)" }, { status: 400 });
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+    
+    // Determine file type and read accordingly
+    let workbook;
+    if (fileName.endsWith('.csv')) {
+      // For CSV files, read as text string
+      const text = new TextDecoder('utf-8').decode(arrayBuffer);
+      workbook = XLSX.read(text, { type: "string" });
+    } else {
+      // For Excel files, read as array buffer
+      workbook = XLSX.read(arrayBuffer, { type: "array" });
+    }
+    
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const json = XLSX.utils.sheet_to_json(sheet) as Record<string, unknown>[];
 
@@ -33,11 +47,11 @@ export async function POST(req: NextRequest) {
     const type = detectFileType(headers);
 
     if (type === "orders") {
-      return await handleOrders(json);
+      return await handleOrders(json, file.name);
     }
 
     if (type === "products") {
-      return await handleProducts(json);
+      return await handleProducts(json, file.name);
     }
 
     return NextResponse.json({ 
@@ -57,7 +71,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function handleOrders(json: Record<string, unknown>[]) {
+async function handleOrders(json: Record<string, unknown>[], fileName: string) {
   let imported = 0;
   let skipped = 0;
   let duplicatesInFile = 0;
@@ -141,6 +155,29 @@ async function handleOrders(json: Record<string, unknown>[]) {
     }
   }
 
+  // Determine status
+  let status = "success";
+  if (imported === 0 && skipped > 0) {
+    status = "failed";
+  } else if (skipped > 0 || duplicatesInFile > 0) {
+    status = "partial";
+  }
+
+  // Save import history
+  await prisma.importHistory.create({
+    data: {
+      fileName,
+      fileType: "orders",
+      totalRows: json.length,
+      importedCount: imported,
+      skippedCount: skipped,
+      duplicatesInFile,
+      duplicatesInDb,
+      status,
+      errorMessages: errors.length > 0 ? errors.slice(0, 20).join("\n") : null,
+    },
+  });
+
   return NextResponse.json({
     message: "Orders uploaded successfully",
     type: "orders",
@@ -153,7 +190,7 @@ async function handleOrders(json: Record<string, unknown>[]) {
   });
 }
 
-async function handleProducts(json: Record<string, unknown>[]) {
+async function handleProducts(json: Record<string, unknown>[], fileName: string) {
   let imported = 0;
   let updated = 0;
   let skipped = 0;
@@ -213,6 +250,29 @@ async function handleProducts(json: Record<string, unknown>[]) {
       skipped++;
     }
   }
+
+  // Determine status
+  let status = "success";
+  if (imported === 0 && updated === 0 && skipped > 0) {
+    status = "failed";
+  } else if (skipped > 0 || duplicatesInFile > 0) {
+    status = "partial";
+  }
+
+  // Save import history
+  await prisma.importHistory.create({
+    data: {
+      fileName,
+      fileType: "products",
+      totalRows: json.length,
+      importedCount: imported + updated,
+      skippedCount: skipped,
+      duplicatesInFile,
+      duplicatesInDb: 0,
+      status,
+      errorMessages: errors.length > 0 ? errors.slice(0, 20).join("\n") : null,
+    },
+  });
 
   return NextResponse.json({
     message: "Products uploaded successfully",

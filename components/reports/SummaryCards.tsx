@@ -1,3 +1,11 @@
+import {
+  CurrencyIcon,
+  CubeIcon,
+  ChartBarIcon,
+  TruckIcon,
+  CalendarIcon,
+} from "../Icons";
+
 interface SummaryCardsProps {
   totalSales: number;
   orderCount: number;
@@ -25,31 +33,31 @@ export default function SummaryCards({
     {
       title: "Нийт борлуулалт",
       value: formatCurrency(totalSales),
-      icon: "💰",
+      icon: CurrencyIcon,
       color: "blue",
     },
     {
       title: "Нийт захиалга",
       value: orderCount.toLocaleString(),
-      icon: "📦",
+      icon: CubeIcon,
       color: "green",
     },
     {
       title: "Дундаж захиалга",
       value: formatCurrency(avgOrderValue),
-      icon: "📊",
+      icon: ChartBarIcon,
       color: "purple",
     },
     {
       title: "Хүргэлтийн төлбөр",
       value: formatCurrency(deliveryFees),
-      icon: "🚚",
+      icon: TruckIcon,
       color: "orange",
     },
     {
       title: "Сүүлийн 7 хоног",
       value: recentOrderCount.toLocaleString(),
-      icon: "📅",
+      icon: CalendarIcon,
       color: "pink",
     },
   ];
@@ -86,9 +94,9 @@ export default function SummaryCards({
         >
           <div className="flex items-center gap-3">
             <div
-              className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${colorClasses[card.color].bg}`}
+              className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClasses[card.color].bg}`}
             >
-              {card.icon}
+              <card.icon className={`w-5 h-5 ${colorClasses[card.color].text}`} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-gray-500 truncate">

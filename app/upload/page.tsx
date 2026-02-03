@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { FolderIcon, CheckIcon, XIcon } from "@/components/Icons";
 
 interface UploadResult {
   message?: string;
@@ -24,10 +25,13 @@ export default function UploadPage() {
   async function handleUpload(file: File) {
     if (!file) return;
 
-    // Validate file type
+    // Validate file type - accept various Excel and spreadsheet formats
     const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
-      setResult({ error: "Excel файл оруулна уу (.xlsx эсвэл .xls)" });
+    const validExtensions = ['.xlsx', '.xls', '.xlsm', '.xlsb', '.csv', '.ods'];
+    const isValid = validExtensions.some(ext => fileName.endsWith(ext));
+    
+    if (!isValid) {
+      setResult({ error: "Excel файл оруулна уу (.xlsx, .xls, .xlsm, .xlsb, .csv, .ods)" });
       return;
     }
 
@@ -103,12 +107,12 @@ export default function UploadPage() {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".xlsx,.xls"
+          accept=".xlsx,.xls,.xlsm,.xlsb,.csv,.ods"
           onChange={handleFileChange}
           className="hidden"
         />
         
-        <div className="text-5xl mb-4">📁</div>
+        <FolderIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
         
         {isUploading ? (
           <div className="space-y-2">
@@ -128,7 +132,7 @@ export default function UploadPage() {
               Файл сонгох
             </button>
             <p className="text-sm text-gray-500 mt-4">
-              Дэмжигдэх формат: .xlsx, .xls
+              Дэмжигдэх формат: .xlsx, .xls, .xlsm, .xlsb, .csv, .ods
             </p>
           </>
         )}
@@ -144,7 +148,9 @@ export default function UploadPage() {
         >
           {result.error ? (
             <div className="flex items-start">
-              <span className="text-2xl mr-3">❌</span>
+              <div className="w-8 h-8 mr-3 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <XIcon className="w-5 h-5 text-red-600" />
+              </div>
               <div>
                 <h3 className="font-semibold text-red-800">Оруулахад алдаа гарлаа</h3>
                 <p className="text-red-700">{result.error}</p>
@@ -153,7 +159,9 @@ export default function UploadPage() {
           ) : (
             <div className="space-y-4">
               <div className="flex items-start">
-                <span className="text-2xl mr-3">✅</span>
+                <div className="w-8 h-8 mr-3 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckIcon className="w-5 h-5 text-green-600" />
+                </div>
                 <div>
                   <h3 className="font-semibold text-green-800">{result.message}</h3>
                   <p className="text-green-700">

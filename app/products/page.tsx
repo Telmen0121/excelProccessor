@@ -1,6 +1,16 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, FC } from "react";
+import {
+  SortIcon,
+  CurrencyIcon,
+  CubeIcon,
+  CalendarIcon,
+} from "@/components/Icons";
+
+interface IconProps {
+  className?: string;
+}
 
 interface Product {
   id: number;
@@ -201,11 +211,11 @@ export default function ProductsPage() {
     return { text: 'Байгаа', class: 'bg-green-100 text-green-800', dot: 'bg-green-500' };
   }
 
-  const sortOptions = [
-    { field: "name" as SortField, label: "Нэр", icon: "🔤" },
-    { field: "price" as SortField, label: "Үнэ", icon: "💰" },
-    { field: "stock" as SortField, label: "Үлдэгдэл", icon: "📦" },
-    { field: "createdAt" as SortField, label: "Огноо", icon: "📅" },
+  const sortOptions: { field: SortField; label: string; Icon: FC<IconProps> }[] = [
+    { field: "name", label: "Нэр", Icon: SortIcon },
+    { field: "price", label: "Үнэ", Icon: CurrencyIcon },
+    { field: "stock", label: "Үлдэгдэл", Icon: CubeIcon },
+    { field: "createdAt", label: "Огноо", Icon: CalendarIcon },
   ];
 
   // Get products filtered by category (for stock filter counts)
@@ -438,7 +448,7 @@ export default function ProductsPage() {
                       }`}
                     >
                       <span className="flex items-center gap-2">
-                        <span>{option.icon}</span>
+                        <option.Icon className="w-4 h-4" />
                         {option.label}
                       </span>
                       {sortField === option.field && (
@@ -490,7 +500,7 @@ export default function ProductsPage() {
         </div>
       ) : filteredAndSortedProducts.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow border border-gray-200">
-          <div className="text-4xl mb-3">📦</div>
+          <CubeIcon className="w-12 h-12 mx-auto mb-3 text-gray-400" />
           <p className="text-gray-500">Бүтээгдэхүүн олдсонгүй</p>
           <p className="text-sm text-gray-400 mt-1">Шүүлтүүрээ өөрчилж үзнэ үү</p>
         </div>
