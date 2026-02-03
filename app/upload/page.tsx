@@ -9,6 +9,8 @@ interface UploadResult {
   imported?: number;
   updated?: number;
   skipped?: number;
+  duplicatesInFile?: number;
+  duplicatesInDb?: number;
   total?: number;
   errors?: string[];
 }
@@ -81,8 +83,8 @@ export default function UploadPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Excel файл оруулах</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900">Excel файл оруулах</h1>
+        <p className="text-gray-600 mt-1">
           Захиалга эсвэл Бүтээгдэхүүний Excel файлаа оруулж системд импортлоно уу.
         </p>
       </div>
@@ -90,8 +92,8 @@ export default function UploadPage() {
       <div
         className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
           dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-gray-300 dark:border-gray-600 hover:border-gray-400"
+            ? "border-blue-500 bg-blue-50"
+            : "border-gray-300 hover:border-gray-400"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -111,21 +113,21 @@ export default function UploadPage() {
         {isUploading ? (
           <div className="space-y-2">
             <div className="animate-spin inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
-            <p className="text-gray-600 dark:text-gray-400">Файл боловсруулж байна...</p>
+            <p className="text-gray-600">Файл боловсруулж байна...</p>
           </div>
         ) : (
           <>
-            <p className="text-lg text-gray-700 dark:text-gray-300 mb-2">
+            <p className="text-lg text-gray-700 mb-2">
               Excel файлаа энд чирж тавина уу
             </p>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">эсвэл</p>
+            <p className="text-gray-500 mb-4">эсвэл</p>
             <button
               onClick={() => fileInputRef.current?.click()}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
               Файл сонгох
             </button>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+            <p className="text-sm text-gray-500 mt-4">
               Дэмжигдэх формат: .xlsx, .xls
             </p>
           </>
@@ -136,16 +138,16 @@ export default function UploadPage() {
         <div
           className={`rounded-lg p-6 ${
             result.error
-              ? "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
-              : "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+              ? "bg-red-50 border border-red-200"
+              : "bg-green-50 border border-green-200"
           }`}
         >
           {result.error ? (
             <div className="flex items-start">
               <span className="text-2xl mr-3">❌</span>
               <div>
-                <h3 className="font-semibold text-red-800 dark:text-red-300">Оруулахад алдаа гарлаа</h3>
-                <p className="text-red-700 dark:text-red-400">{result.error}</p>
+                <h3 className="font-semibold text-red-800">Оруулахад алдаа гарлаа</h3>
+                <p className="text-red-700">{result.error}</p>
               </div>
             </div>
           ) : (
@@ -153,38 +155,50 @@ export default function UploadPage() {
               <div className="flex items-start">
                 <span className="text-2xl mr-3">✅</span>
                 <div>
-                  <h3 className="font-semibold text-green-800 dark:text-green-300">{result.message}</h3>
-                  <p className="text-green-700 dark:text-green-400">
+                  <h3 className="font-semibold text-green-800">{result.message}</h3>
+                  <p className="text-green-700">
                     Файлын төрөл: <span className="font-medium capitalize">{result.type === "orders" ? "Захиалга" : "Бүтээгдэхүүн"}</span>
                   </p>
                 </div>
               </div>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Нийт мөр</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{result.total}</p>
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-gray-600">Нийт мөр</p>
+                  <p className="text-2xl font-bold text-gray-900">{result.total}</p>
                 </div>
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Импортлогдсон</p>
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-gray-600">Импортлогдсон</p>
                   <p className="text-2xl font-bold text-green-600">{result.imported}</p>
                 </div>
                 {result.updated !== undefined && (
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Шинэчлэгдсэн</p>
+                  <div className="bg-white rounded-lg p-4 shadow-sm">
+                    <p className="text-sm text-gray-600">Шинэчлэгдсэн</p>
                     <p className="text-2xl font-bold text-blue-600">{result.updated}</p>
                   </div>
                 )}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Алгассан</p>
+                {(result.duplicatesInFile !== undefined && result.duplicatesInFile > 0) && (
+                  <div className="bg-white rounded-lg p-4 shadow-sm border-2 border-orange-300">
+                    <p className="text-sm text-orange-600">Файл дотор давхардсан</p>
+                    <p className="text-2xl font-bold text-orange-600">{result.duplicatesInFile}</p>
+                  </div>
+                )}
+                {(result.duplicatesInDb !== undefined && result.duplicatesInDb > 0) && (
+                  <div className="bg-white rounded-lg p-4 shadow-sm">
+                    <p className="text-sm text-gray-600">Өмнө оруулсан</p>
+                    <p className="text-2xl font-bold text-gray-500">{result.duplicatesInDb}</p>
+                  </div>
+                )}
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-gray-600">Алгассан</p>
                   <p className="text-2xl font-bold text-gray-500">{result.skipped}</p>
                 </div>
               </div>
 
               {result.errors && result.errors.length > 0 && (
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800">
-                  <h4 className="font-medium text-yellow-800 dark:text-yellow-300 mb-2">Анхааруулга:</h4>
-                  <ul className="list-disc list-inside text-sm text-yellow-700 dark:text-yellow-400 space-y-1">
+                <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                  <h4 className="font-medium text-yellow-800 mb-2">Анхааруулга:</h4>
+                  <ul className="list-disc list-inside text-sm text-yellow-700 space-y-1">
                     {result.errors.map((err, i) => (
                       <li key={i}>{err}</li>
                     ))}
@@ -196,9 +210,9 @@ export default function UploadPage() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Зааварчилгаа</h2>
-        <div className="space-y-3 text-gray-600 dark:text-gray-400">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Зааварчилгаа</h2>
+        <div className="space-y-3 text-gray-600">
           <p>
             <strong>1.</strong> Excel файлдаа зөв баганын гарчиг оруулна уу.
           </p>

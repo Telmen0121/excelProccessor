@@ -16,9 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="mn">
+    <html lang="mn" className="light">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-gray-50">
           <Sidebar />
           <main className="ml-64 min-h-screen p-6 transition-all duration-300">
             {children}

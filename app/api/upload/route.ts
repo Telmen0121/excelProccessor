@@ -60,7 +60,10 @@ export async function POST(req: NextRequest) {
 async function handleOrders(json: Record<string, unknown>[]) {
   let imported = 0;
   let skipped = 0;
+  let duplicatesInFile = 0;
+  let duplicatesInDb = 0;
   const errors: string[] = [];
+  const seenCodes = new Set<string>();
 
   for (const row of json) {
     try {
@@ -71,13 +74,21 @@ async function handleOrders(json: Record<string, unknown>[]) {
         continue;
       }
 
-      // Check for duplicate
+      // Check for duplicate within the file
+      if (seenCodes.has(code)) {
+        duplicatesInFile++;
+        errors.push(`Давхардсан код файл дотор: ${code}`);
+        continue;
+      }
+      seenCodes.add(code);
+
+      // Check for duplicate in database
       const existing = await prisma.order.findUnique({
         where: { code }
       });
 
       if (existing) {
-        skipped++;
+        duplicatesInDb++;
         continue;
       }
 
@@ -135,8 +146,10 @@ async function handleOrders(json: Record<string, unknown>[]) {
     type: "orders",
     imported,
     skipped,
+    duplicatesInFile,
+    duplicatesInDb,
     total: json.length,
-    errors: errors.length > 0 ? errors.slice(0, 10) : undefined
+    errors: errors.length > 0 ? errors.slice(0, 20) : undefined
   });
 }
 
@@ -144,7 +157,9 @@ async function handleProducts(json: Record<string, unknown>[]) {
   let imported = 0;
   let updated = 0;
   let skipped = 0;
+  let duplicatesInFile = 0;
   const errors: string[] = [];
+  const seenNames = new Set<string>();
 
   for (const row of json) {
     try {
@@ -154,6 +169,14 @@ async function handleProducts(json: Record<string, unknown>[]) {
         skipped++;
         continue;
       }
+
+      // Check for duplicate within the file
+      if (seenNames.has(name)) {
+        duplicatesInFile++;
+        errors.push(`Давхардсан нэр файл дотор: ${name}`);
+        continue;
+      }
+      seenNames.add(name);
 
       const existing = await prisma.product.findUnique({
         where: { name }
@@ -197,7 +220,8 @@ async function handleProducts(json: Record<string, unknown>[]) {
     imported,
     updated,
     skipped,
+    duplicatesInFile,
     total: json.length,
-    errors: errors.length > 0 ? errors.slice(0, 10) : undefined
+    errors: errors.length > 0 ? errors.slice(0, 20) : undefined
   });
 }

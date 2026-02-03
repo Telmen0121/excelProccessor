@@ -122,7 +122,7 @@ export default function ReportsClient() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full" />
-          <p className="text-gray-500 dark:text-gray-400">Тайлан уншиж байна...</p>
+          <p className="text-gray-500">Тайлан уншиж байна...</p>
         </div>
       </div>
     );
@@ -133,16 +133,16 @@ export default function ReportsClient() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900">
             Тайлангийн самбар
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-gray-600 mt-1">
             Борлуулалтын шинжилгээ болон гүйцэтгэлийн үзүүлэлтүүд
           </p>
         </div>
         <button
           onClick={() => window.print()}
-          className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50:bg-gray-700 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -152,9 +152,9 @@ export default function ReportsClient() {
       </div>
 
       {/* Quick View Preset Buttons */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Түргэн харах:</span>
+          <span className="text-sm font-medium text-gray-700">Түргэн харах:</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {viewModes.map((mode) => (
@@ -164,13 +164,13 @@ export default function ReportsClient() {
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 viewMode === mode.id
                   ? "bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-[1.02]"
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200:bg-gray-600"
               }`}
             >
               <span className="text-lg">{mode.icon}</span>
               <div className="text-left">
                 <div>{mode.label}</div>
-                <div className={`text-xs ${viewMode === mode.id ? "text-blue-100" : "text-gray-500 dark:text-gray-400"}`}>
+                <div className={`text-xs ${viewMode === mode.id ? "text-blue-100" : "text-gray-500"}`}>
                   {mode.description}
                 </div>
               </div>
@@ -191,40 +191,40 @@ export default function ReportsClient() {
 
       {/* Filtered Summary (if available) */}
       {filteredSummary && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+        <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+            <p className="text-sm font-medium text-blue-800">
               📅 Шүүсэн үр дүн ({startDate} - {endDate})
             </p>
             <button
               onClick={() => setFilteredSummary(null)}
-              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 text-sm"
+              className="text-blue-600 hover:text-blue-800:text-blue-200 text-sm"
             >
               Шүүлтүүр арилгах
             </button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-xs text-blue-600 dark:text-blue-400">Захиалга</p>
-              <p className="text-lg font-bold text-blue-900 dark:text-blue-100">
+              <p className="text-xs text-blue-600">Захиалга</p>
+              <p className="text-lg font-bold text-blue-900">
                 {filteredSummary.totalOrders.toLocaleString()}
               </p>
             </div>
             <div>
-              <p className="text-xs text-blue-600 dark:text-blue-400">Борлуулалт</p>
-              <p className="text-lg font-bold text-blue-900 dark:text-blue-100">
+              <p className="text-xs text-blue-600">Борлуулалт</p>
+              <p className="text-lg font-bold text-blue-900">
                 ₮{filteredSummary.totalSales.toLocaleString()}
               </p>
             </div>
             <div>
-              <p className="text-xs text-blue-600 dark:text-blue-400">Хүргэлтийн төлбөр</p>
-              <p className="text-lg font-bold text-blue-900 dark:text-blue-100">
+              <p className="text-xs text-blue-600">Хүргэлтийн төлбөр</p>
+              <p className="text-lg font-bold text-blue-900">
                 ₮{filteredSummary.totalDeliveryFees.toLocaleString()}
               </p>
             </div>
             <div>
-              <p className="text-xs text-blue-600 dark:text-blue-400">Дундаж захиалга</p>
-              <p className="text-lg font-bold text-blue-900 dark:text-blue-100">
+              <p className="text-xs text-blue-600">Дундаж захиалга</p>
+              <p className="text-lg font-bold text-blue-900">
                 ₮{Math.round(filteredSummary.avgOrderValue).toLocaleString()}
               </p>
             </div>
@@ -301,23 +301,23 @@ export default function ReportsClient() {
           
           {/* Захиалгын төлөв */}
           {salesData && salesData.ordersByStatus.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Захиалгын төлөв
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {salesData.ordersByStatus.map((status) => (
                   <div
                     key={status.status}
-                    className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4"
+                    className="bg-gray-50 rounded-lg p-4"
                   >
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    <p className="text-sm font-medium text-gray-900">
                       {status.status}
                     </p>
-                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
+                    <p className="text-2xl font-bold text-blue-600 mt-1">
                       {status.count}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-gray-500">
                       ₮{status.total.toLocaleString()}
                     </p>
                   </div>
@@ -335,32 +335,32 @@ export default function ReportsClient() {
             <div className="lg:col-span-2">
               <TopProductsTable products={topProducts} />
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Бүтээгдэхүүний статистик
               </h3>
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Нийт зарагдсан</span>
-                  <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                  <span className="text-sm text-gray-600">Нийт зарагдсан</span>
+                  <span className="text-xl font-bold text-blue-600">
                     {topProducts.reduce((sum, p) => sum + p.totalQuantity, 0).toLocaleString()}
                   </span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Нэр төрөл</span>
-                  <span className="text-xl font-bold text-green-600 dark:text-green-400">
+                <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                  <span className="text-sm text-gray-600">Нэр төрөл</span>
+                  <span className="text-xl font-bold text-green-600">
                     {topProducts.length}
                   </span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Хамгийн эрэлттэй</span>
-                  <span className="text-sm font-bold text-purple-600 dark:text-purple-400 text-right max-w-[150px] truncate">
+                <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                  <span className="text-sm text-gray-600">Хамгийн эрэлттэй</span>
+                  <span className="text-sm font-bold text-purple-600 text-right max-w-[150px] truncate">
                     {topProducts[0]?.productName || "Байхгүй"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Дундаж тоо</span>
-                  <span className="text-xl font-bold text-orange-600 dark:text-orange-400">
+                <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                  <span className="text-sm text-gray-600">Дундаж тоо</span>
+                  <span className="text-xl font-bold text-orange-600">
                     {topProducts.length > 0
                       ? Math.round(topProducts.reduce((sum, p) => sum + p.totalQuantity, 0) / topProducts.length)
                       : 0}
@@ -384,8 +384,8 @@ export default function ReportsClient() {
                 totalAmount: p.totalAmount,
               }))}
             />
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Төлбөрийн хэлбэр
               </h3>
               <div className="space-y-3">
@@ -397,12 +397,12 @@ export default function ReportsClient() {
                   return (
                     <div key={method.paymentMethod}>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-700 dark:text-gray-300">{method.paymentMethod}</span>
-                        <span className="text-gray-500 dark:text-gray-400">
+                        <span className="text-gray-700">{method.paymentMethod}</span>
+                        <span className="text-gray-500">
                           {method.orderCount} ({percentage}%)
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${colors[index % colors.length]}`}
                           style={{ width: `${percentage}%` }}

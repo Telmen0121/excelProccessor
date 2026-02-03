@@ -18,25 +18,25 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 z-50 ${
-        collapsed ? "w-20" : "w-64"
+      className={`fixed left-0 top-0 h-screen bg-white border-r border-gray-200 shadow-lg transition-all duration-300 z-50 ${
+        collapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Logo Section */}
-      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-        <Link href="/" className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md flex-shrink-0">
-            EV
-          </div>
-          {!collapsed && (
-            <span className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
+      <div className={`flex items-center h-16 border-b border-gray-200 ${collapsed ? "justify-center px-2" : "justify-between px-4"}`}>
+        {!collapsed && (
+          <Link href="/" className="flex items-center gap-3 overflow-hidden">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md flex-shrink-0">
+              EV
+            </div>
+            <span className="text-lg font-bold text-gray-900 whitespace-nowrap">
               Excel Viewer
             </span>
-          )}
-        </Link>
+          </Link>
+        )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors flex-shrink-0"
         >
           <svg
             className={`w-5 h-5 transition-transform ${collapsed ? "rotate-180" : ""}`}
@@ -55,7 +55,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="p-4 space-y-2">
+      <nav className={`p-2 space-y-2 ${collapsed ? "px-2" : "p-4"}`}>
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -65,10 +65,12 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group ${
+              className={`flex items-center gap-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                collapsed ? "justify-center px-2" : "px-4"
+              } ${
                 isActive
                   ? "bg-blue-600 text-white shadow-md shadow-blue-500/30"
-                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  : "text-gray-600 hover:bg-gray-100"
               }`}
               title={collapsed ? item.label : undefined}
             >
@@ -80,9 +82,9 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom Section */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
         {!collapsed && (
-          <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+          <div className="text-xs text-gray-500 text-center">
             <p>© 2026 Excel Viewer</p>
             <p className="mt-1">v1.0.0</p>
           </div>

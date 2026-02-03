@@ -56,24 +56,24 @@ export default function SummaryCards({
 
   const colorClasses: Record<string, { bg: string; text: string }> = {
     blue: {
-      bg: "bg-blue-100 dark:bg-blue-900/50",
-      text: "text-blue-600 dark:text-blue-400",
+      bg: "bg-blue-100",
+      text: "text-blue-600",
     },
     green: {
-      bg: "bg-green-100 dark:bg-green-900/50",
-      text: "text-green-600 dark:text-green-400",
+      bg: "bg-green-100",
+      text: "text-green-600",
     },
     purple: {
-      bg: "bg-purple-100 dark:bg-purple-900/50",
-      text: "text-purple-600 dark:text-purple-400",
+      bg: "bg-purple-100",
+      text: "text-purple-600",
     },
     orange: {
-      bg: "bg-orange-100 dark:bg-orange-900/50",
-      text: "text-orange-600 dark:text-orange-400",
+      bg: "bg-orange-100",
+      text: "text-orange-600",
     },
     pink: {
-      bg: "bg-pink-100 dark:bg-pink-900/50",
-      text: "text-pink-600 dark:text-pink-400",
+      bg: "bg-pink-100",
+      text: "text-pink-600",
     },
   };
 
@@ -82,7 +82,7 @@ export default function SummaryCards({
       {cards.map((card) => (
         <div
           key={card.title}
-          className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700"
+          className="bg-white rounded-xl p-4 shadow-sm border border-gray-200"
         >
           <div className="flex items-center gap-3">
             <div
@@ -91,7 +91,7 @@ export default function SummaryCards({
               {card.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              <p className="text-xs text-gray-500 truncate">
                 {card.title}
               </p>
               <p

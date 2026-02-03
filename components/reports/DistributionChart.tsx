@@ -46,10 +46,10 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<
     }).format(data.amount);
     
     return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2 shadow-lg">
-        <p className="font-medium text-gray-900 dark:text-white">{data.name}</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{data.value} захиалга</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{formattedAmount}</p>
+      <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-lg">
+        <p className="font-medium text-gray-900">{data.name}</p>
+        <p className="text-sm text-gray-600">{data.value} захиалга</p>
+        <p className="text-sm text-gray-600">{formattedAmount}</p>
       </div>
     );
   }
@@ -64,8 +64,8 @@ export default function DistributionChart({ data, title }: DistributionChartProp
   }));
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">
         {title}
       </h3>
       <div className="h-64">
@@ -93,7 +93,7 @@ export default function DistributionChart({ data, title }: DistributionChartProp
               align="right"
               verticalAlign="middle"
               formatter={(value: string) => (
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600">
                   {value}
                 </span>
               )}

@@ -59,10 +59,10 @@ export default function DateFilter({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-medium text-gray-700">
             Түргэн шүүлт:
           </span>
           <div className="flex gap-2">
@@ -74,7 +74,7 @@ export default function DateFilter({
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
                   activeFilter === filter.id
                     ? "bg-blue-600 text-white shadow-md"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 dark:hover:text-blue-300"
+                    : "bg-gray-100 text-gray-700 hover:bg-blue-100:bg-blue-900 hover:text-blue-700:text-blue-300"
                 } disabled:opacity-50`}
               >
                 {filter.label}
@@ -83,34 +83,34 @@ export default function DateFilter({
           </div>
         </div>
 
-        <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 hidden md:block" />
+        <div className="h-6 w-px bg-gray-300 hidden md:block" />
 
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-medium text-gray-700">
             Эхлэх:
           </span>
           <input
             type="date"
             value={startDate}
             onChange={(e) => handleDateChange("start", e.target.value)}
-            className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-1.5 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-medium text-gray-700">
             Дуусах:
           </span>
           <input
             type="date"
             value={endDate}
             onChange={(e) => handleDateChange("end", e.target.value)}
-            className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-1.5 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
 
         {loading && (
-          <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+          <div className="flex items-center gap-2 text-blue-600">
             <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
               <circle
                 className="opacity-25"
